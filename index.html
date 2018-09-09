@@ -4,15 +4,36 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="shortcut icon" href="assets/images/favicon.png" />
-  <title>Trivia</title>
+  <title>GifTastic</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" media="screen" href="assets/css/style.css" />
 </head>
 <body>
-  <div class="container">
+  <div class="container-fluid">
     <div class="row">
-      
+      <div class="col-sm-12">
+        <h1>Animal Gifs are GifTastic!</h1>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-10">
+        <div id="animal-buttons"></div>
+      </div>
+      <div class="col-sm-2">
+        <form>
+            <div class="form-group">
+              <label for="add-animal">Add an animal</label>
+              <input type="text" class="form-control" id="add-animal" placeholder="Enter an animal">
+            </div>
+            <button type="submit" id="new-animal" class="btn btn-primary">Submit</button>
+          </form>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+          <div id="gifs"></div>
+      </div>
     </div>
   </div>
 
