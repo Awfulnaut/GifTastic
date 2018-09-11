@@ -1,7 +1,15 @@
 var animals = ["cat", "dog", "emu", "ostrich", "spider", "pangolin"];
+var query;
+var queryURL;
+var queryOffset = 0;
+var clear = true;
+
 
 function generateQueryURL(query) {
-  var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=f9fZThTyAb4xSqkNecynK35yoCO32NlM&limit=10&q=" + query;
+  queryURL = "https://api.giphy.com/v1/gifs/search?api_key=f9fZThTyAb4xSqkNecynK35yoCO32NlM&limit=10" + 
+  "&q=" + query +
+  "&offset=" + queryOffset;
+  
   return queryURL;
 }
 
@@ -15,14 +23,53 @@ function generateButtons() {
 }
 
 $(document).ready(function () {
+
+  // Declare function that does the AJAX call and displays 10 gifs on the page
+  function getTenGifs() {
+    $.ajax({
+      url: queryURL,
+      method: "GET"
+    }).then(function(response) {
+      var results = response.data;
+
+      // If prompted to clear the existing gifs, empty the #gifs div
+      if (clear) {
+        $('#gifs').empty();
+      }
+
+      for (var i = 0; i < results.length; i++) {
+        // Create a div to house the gif and rating
+        var gifDiv = $('<div class="gif">');
+    
+        // create an image to hold the gif and all its data, including still/animated states
+        var gif = $('<img data-state="still">');
+        gif.attr('src', results[i].images.fixed_height_still.url);
+        gif.attr('data-state', "still");
+        gif.attr('data-still', results[i].images.fixed_height_still.url)
+        gif.attr('data-animate', results[i].images.fixed_height.url)
+    
+        // Create a paragraph with the gif's rating
+        var rating = $('<p class="rating">').text("Rating: " + results[i].rating);
+    
+        // Append the gif and rating to the gifDiv
+        gifDiv.append(rating, gif);
+    
+        // Append the gifDiv to the div on the page
+        $('#gifs').append(gifDiv);
+      }
+    })
+  }
+
   // Generate buttons for the existing items in the animals array
   generateButtons();
 
+  // Hide the "more" button on page load
+  // $('#more-gifs').hide();
 
   $("#new-animal").on("click", function(event) {
     // Prevents the page from reloading on form submit
     event.preventDefault();
-  
+
     // If a value is entered, add the inputted animal to the array and then generate the buttons again
     if ($('#add-animal').val()) {
       animals.push($('#add-animal').val().trim());
@@ -33,56 +80,47 @@ $(document).ready(function () {
 
   // When an animal button is clicked, generate the queryURL and push 10 gifs of that animal to the DOM
   $('#animal-buttons').on('click', '.animal-btn', function() {
-    // generate the query results using the value of the button as the query
-    var queryURL = generateQueryURL($(this).text());
-    console.log(queryURL);
 
-    $('#gifs').on('click', '.gif img', function() {
-      var state = $(this).attr('data-state');
+    // show the more button
+    $('#moar').removeClass('d-none');
 
-      if (state == "still") {
-        $(this).attr('src', $(this).attr('data-animate'));
-        $(this).attr('data-state', 'animate');
-      } else if (state == "animate") {
-        $(this).attr('src', $(this).attr('data-still'));
-        $(this).attr('data-state', 'still');
-      }
-    });
+    // Use the button text as the query
+    query = $(this).text();
 
-    $.ajax({
-      url: queryURL,
-      method: "GET"
-    }).then(function(response) {
-      var results = response.data;
-      console.log(results);
-      $('#gifs').empty();
-      for (var i = 0; i < results.length; i++) {
-        // Create a div to house the gif and rating
-        var gifDiv = $('<div class="gif">');
+    // reset any query offset
+    queryOffset = 0;
 
-        // create an image to hold the gif and all its data, including still/animated states
-        var gif = $('<img data-state="still">');
-        gif.attr('src', results[i].images.fixed_height_still.url);
-        gif.attr('data-state', "still");
-        gif.attr('data-still', results[i].images.fixed_height_still.url)
-        gif.attr('data-animate', results[i].images.fixed_height.url)
+    // Generate the query URL
+    queryURL = generateQueryURL(query);
 
-        // Create a paragraph with the gif's rating
-        var rating = $('<p class="rating">').text("Rating: " + results[i].rating);
+    // Clear the existing gifs and display 10
+    clear = true;
+    getTenGifs();
+  });
 
-        // Append the gif and rating to the gifDiv
-        gifDiv.append(rating, gif);
+  $('#moar').on('click', function() {
 
-        // Append the gifDiv to the div on the page
-        $('#gifs').append(gifDiv);
-      }
-      
-      
-    });
+    // increase the offset so it displays the next 10 gifs
+    queryOffset += 10;
 
-    
+    // generate the query again using the existing query
+    queryURL = generateQueryURL(query);
 
+    // DON'T clear the existing gifs, and display 10 more
+    clear = false;
+    getTenGifs();
   })
 
+  // Logic to pause/play gifs
+  $('#gifs').on('click', '.gif img', function() {
+    var state = $(this).attr('data-state');
 
+    if (state == "still") {
+      $(this).attr('src', $(this).attr('data-animate'));
+      $(this).attr('data-state', 'animate');
+    } else if (state == "animate") {
+      $(this).attr('src', $(this).attr('data-still'));
+      $(this).attr('data-state', 'still');
+    }
+  })
 });

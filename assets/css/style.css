@@ -23,3 +23,8 @@ h1 {
 .rating {
   margin-bottom: 5px;
 }
+
+#moar {
+  display: block;
+  clear: both;
+}
