@@ -1,4 +1,4 @@
-var animals = ["cat", "dog", "emu", "ostrich", "spider", "pangolin"];
+var topics = ["cat", "emu", "cyndaquil", "pangolin"];
 var query;
 var queryURL;
 var queryOffset = 0;
@@ -14,11 +14,11 @@ function generateQueryURL(query) {
 }
 
 function generateButtons() {
-  $('#animal-buttons').empty();
-  for (var i = 0; i < animals.length; i++) {
-    var newButton = $('<button class="btn btn-secondary animal-btn px-4">');
-    newButton.text(animals[i]);
-    $('#animal-buttons').append(newButton);
+  $('#topic-buttons').empty();
+  for (var i = 0; i < topics.length; i++) {
+    var newButton = $('<button class="btn btn-secondary topic-btn px-4">');
+    newButton.text(topics[i]);
+    $('#topic-buttons').append(newButton);
   }
 }
 
@@ -60,26 +60,26 @@ $(document).ready(function () {
     })
   }
 
-  // Generate buttons for the existing items in the animals array
+  // Generate buttons for the existing items in the topics array
   generateButtons();
 
   // Hide the "more" button on page load
   // $('#more-gifs').hide();
 
-  $("#new-animal").on("click", function(event) {
+  $("#new-topic").on("click", function(event) {
     // Prevents the page from reloading on form submit
     event.preventDefault();
 
-    // If a value is entered, add the inputted animal to the array and then generate the buttons again
-    if ($('#add-animal').val()) {
-      animals.push($('#add-animal').val().trim());
-      $('#add-animal').val("");
+    // If a value is entered, add the inputted topic to the array and then generate the buttons again
+    if ($('#add-topic').val()) {
+      topics.push($('#add-topic').val().trim());
+      $('#add-topic').val("");
       generateButtons();
     }
   });
 
-  // When an animal button is clicked, generate the queryURL and push 10 gifs of that animal to the DOM
-  $('#animal-buttons').on('click', '.animal-btn', function() {
+  // When an topic button is clicked, generate the queryURL and push 10 gifs of that topic to the DOM
+  $('#topic-buttons').on('click', '.topic-btn', function() {
 
     // show the more button
     $('#moar').removeClass('d-none');
